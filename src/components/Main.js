@@ -9,13 +9,14 @@ function Main({userName, userAbout, userAvatar, cards}) {
   const [ isOpenPopupAvatar, setIsOpenPopupAvatar ] = React.useState(false);
   const [ isOpenPopupDelete, setIsOpenPopupDelete ] = React.useState(false);
 
-  const [ selectedCard, setSelectedCard ] = React.useState({});
+  const [ selectedCard, setSelectedCard ] = React.useState(null);
 
   const closeAllPopups = () => {
     setIsOpenPopupEdit(false);
     setIsOpenPopupAdd(false);
     setIsOpenPopupAvatar(false);
     setIsOpenPopupDelete(false);
+    setSelectedCard(null);
   }
 
   return (
@@ -39,7 +40,7 @@ function Main({userName, userAbout, userAvatar, cards}) {
           <ul className="elements">
             {
               cards.map((card) => (
-                <Card key={card.id} card={card} />
+                <Card key={card.id} card={card} onCardClick={setSelectedCard} />
               ))
             }
           </ul>
@@ -83,7 +84,7 @@ function Main({userName, userAbout, userAvatar, cards}) {
 
       <PopupWithForm name="delete" title="Вы уверены?" buttonTitle="Да" isOpen={isOpenPopupDelete} onClose={closeAllPopups} />
 
-      <ImagePopup />
+      <ImagePopup card={selectedCard} onClose={closeAllPopups} />
     </>
   )
 }
