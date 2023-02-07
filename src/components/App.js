@@ -10,7 +10,7 @@ function App() {
   const [ userDescription, setUserDescription ] = React.useState("");
   const [ userAvatar, setUserAvatar ] = React.useState("");
 
-  // const [cards, setCards ] = React.useState([]);
+  const [ cards, setCards ] = React.useState([]);
 
   React.useEffect(() => {
     api.getUserValues().then((data) => {
@@ -20,6 +20,12 @@ function App() {
     })
   }, [userName, userDescription, userAvatar])
 
+  React.useEffect(() => {
+    api.getInitialCards().then((data) => {
+      setCards(data)
+    })
+  }, [])
+
   return (
     <>
       <Header altText="Логотип Место" />
@@ -27,6 +33,7 @@ function App() {
         userName={userName}
         userAbout={userDescription}
         userAvatar={userAvatar}
+        cards={cards}
       />
       <Footer />
     </>
