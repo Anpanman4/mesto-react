@@ -40,7 +40,7 @@ function Main({userName, userAbout, userAvatar, cards}) {
           <ul className="elements">
             {
               cards.map((card) => (
-                <Card key={card.id} card={card} onCardClick={setSelectedCard} />
+                <Card key={card._id} card={card} onCardClick={setSelectedCard} />
               ))
             }
           </ul>
