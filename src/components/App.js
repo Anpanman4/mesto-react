@@ -8,6 +8,7 @@ import Main from "./Main.js"
 import ImagePopup from "./ImagePopup.js";
 import PopupWithForm from "./PopupWithForm.js";
 import EditProfilePopup from "./EditProfilePopup.js";
+import EditAvatarPopup from "./EditAvatarPopup.js";
 
 import api from "../utils/api.js"
 
@@ -73,6 +74,15 @@ function App() {
     .catch((err) => console.log(err));
   }
 
+  const handleAvatarSubmit = (info) => {
+    api.updateUserAvatar(info)
+    .then((data) => {
+      setCurrentUser(data);
+      closeAllPopups();
+    })
+    .catch((err) => console.log(err));
+  }
+
   useEffect(() => {
     api.getUserValues()
     .then((data) => {
@@ -122,18 +132,10 @@ function App() {
           </form>
         </PopupWithForm>
 
-        <PopupWithForm name="avatar" title="Обновить аватар" isOpen={isOpenPopupAvatar} onClose={closeAllPopups}>
-          <form className="popup__form" name="new-avatar" noValidate>
-            <section className="popup__section">
-              <input className="popup__field popup__field_type_image" type="url" name="avatar" defaultValue={currentUser.avatar} placeholder="Ссылка на картинку" autoComplete="off" required />
-              <span className="popup__field-error"></span>
-            </section>
-            <button className="popup__save-button">Сохранить</button>
-          </form>
-        </PopupWithForm>
+        <EditAvatarPopup isOpen={isOpenPopupAvatar} onClose={closeAllPopups} onUpdateAvatar={handleAvatarSubmit} />
 
         <PopupWithForm name="delete" title="Вы уверены?" isOpen={isOpenPopupDelete} onClose={closeAllPopups}>
-        <button className="popup__save-button">Да</button>
+          <button className="popup__save-button">Да</button>
         </PopupWithForm>
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
