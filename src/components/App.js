@@ -9,6 +9,7 @@ import ImagePopup from "./ImagePopup.js";
 import PopupWithForm from "./PopupWithForm.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
+import AddPlacePopup from "./AddPlacePopup.js";
 
 import api from "../utils/api.js"
 
@@ -74,6 +75,15 @@ function App() {
     .catch((err) => console.log(err));
   }
 
+  const handleAddCardSubmit = (card) => {
+    api.createNewCard(card)
+    .then((newCard) => {
+      setCards([newCard, ...cards])
+      closeAllPopups();
+    })
+    .catch((err) => console.log(err));
+  }
+
   const handleAvatarSubmit = (info) => {
     api.updateUserAvatar(info)
     .then((data) => {
@@ -118,19 +128,7 @@ function App() {
 
         <EditProfilePopup isOpen={isOpenPopupEdit} onClose={closeAllPopups} onUpdateUser={handleProfileSubmit} />
 
-        <PopupWithForm name="add" title="Новое место" isOpen={isOpenPopupAdd} onClose={closeAllPopups}>
-          <form className="popup__form" name="new-card" noValidate>
-            <section className="popup__section">
-              <input className="popup__field popup__field_type_name" type="text" name="name" placeholder="Название" autoComplete="off" required minLength="2" maxLength="30" />
-              <span className="popup__field-error"></span>
-            </section>
-            <section className="popup__section">
-              <input className="popup__field popup__field_type_image" type="url" name="link" placeholder="Ссылка на картинку" autoComplete="off" required />
-              <span className="popup__field-error"></span>
-            </section>
-            <button className="popup__save-button">Создать</button>
-          </form>
-        </PopupWithForm>
+        <AddPlacePopup isOpen={isOpenPopupAdd} onClose={closeAllPopups} addNewCard={handleAddCardSubmit} />
 
         <EditAvatarPopup isOpen={isOpenPopupAvatar} onClose={closeAllPopups} onUpdateAvatar={handleAvatarSubmit} />
 
