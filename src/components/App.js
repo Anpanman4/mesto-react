@@ -7,6 +7,7 @@ import Footer from "./Footer.js";
 import Main from "./Main.js"
 import ImagePopup from "./ImagePopup.js";
 import PopupWithForm from "./PopupWithForm.js";
+import EditProfilePopup from "./EditProfilePopup.js";
 
 import api from "../utils/api.js"
 
@@ -37,7 +38,7 @@ function App() {
     .then((newCard) => {
       const newCards = cards.map((card) => {
         return card._id === newCard._id ? newCard : card;
-      })
+      });
       setCards(newCards);
     })
     .catch((err) => console.log(err))
@@ -49,7 +50,7 @@ function App() {
       const newCards = cards.map((card) => {
         return card._id === newCard._id ? newCard : card;
       })
-      setCards(newCards)
+      setCards(newCards);
     })
     .catch((err) => console.log(err))
   }
@@ -57,10 +58,19 @@ function App() {
   const deleteCard = (id) => {
     api.deleteCard(id)
     .then(() => {
-      const newCards = cards.filter(card => card._id !== id)
-      setCards(newCards)
+      const newCards = cards.filter(card => card._id !== id);
+      setCards(newCards);
     })
     .catch((err) => console.log(err))
+  }
+
+  const handleProfileSubmit = (info) => {
+    api.updateUserValues(info)
+    .then((data) => {
+      setCurrentUser(data);
+      closeAllPopups();
+    })
+    .catch((err) => console.log(err));
   }
 
   useEffect(() => {
@@ -96,20 +106,9 @@ function App() {
 
         <Footer />
 
-        <PopupWithForm name="edit" title="Редактировать профиль" buttonTitle="Сохранить" isOpen={isOpenPopupEdit} onClose={closeAllPopups}>
-          <form className="popup__form" name="personal-information" noValidate>
-            <section className="popup__section">
-              <input className="popup__field popup__field_type_name" type="text" name="name" placeholder="Ваше имя" autoComplete="off" required minLength="2" maxLength="40" />
-              <span className="popup__field-error"></span>
-            </section>
-            <section className="popup__section">
-              <input className="popup__field popup__field_type_job" type="text" name="about" placeholder="Чем занимаетесь" autoComplete="off" required minLength="2" maxLength="200" />
-              <span className="popup__field-error"></span>
-            </section>
-          </form>
-        </PopupWithForm>
+        <EditProfilePopup isOpen={isOpenPopupEdit} onClose={closeAllPopups} onUpdateUser={handleProfileSubmit} />
 
-        <PopupWithForm name="add" title="Новое место" buttonTitle="Создать" isOpen={isOpenPopupAdd} onClose={closeAllPopups}>
+        <PopupWithForm name="add" title="Новое место" isOpen={isOpenPopupAdd} onClose={closeAllPopups}>
           <form className="popup__form" name="new-card" noValidate>
             <section className="popup__section">
               <input className="popup__field popup__field_type_name" type="text" name="name" placeholder="Название" autoComplete="off" required minLength="2" maxLength="30" />
@@ -119,19 +118,23 @@ function App() {
               <input className="popup__field popup__field_type_image" type="url" name="link" placeholder="Ссылка на картинку" autoComplete="off" required />
               <span className="popup__field-error"></span>
             </section>
+            <button className="popup__save-button">Создать</button>
           </form>
         </PopupWithForm>
 
-        <PopupWithForm name="avatar" title="Обновить аватар" buttonTitle="Сохранить" isOpen={isOpenPopupAvatar} onClose={closeAllPopups}>
+        <PopupWithForm name="avatar" title="Обновить аватар" isOpen={isOpenPopupAvatar} onClose={closeAllPopups}>
           <form className="popup__form" name="new-avatar" noValidate>
             <section className="popup__section">
-              <input className="popup__field popup__field_type_image" type="url" name="avatar" placeholder="Ссылка на картинку" autoComplete="off" required />
+              <input className="popup__field popup__field_type_image" type="url" name="avatar" defaultValue={currentUser.avatar} placeholder="Ссылка на картинку" autoComplete="off" required />
               <span className="popup__field-error"></span>
             </section>
+            <button className="popup__save-button">Сохранить</button>
           </form>
         </PopupWithForm>
 
-        <PopupWithForm name="delete" title="Вы уверены?" buttonTitle="Да" isOpen={isOpenPopupDelete} onClose={closeAllPopups} />
+        <PopupWithForm name="delete" title="Вы уверены?" isOpen={isOpenPopupDelete} onClose={closeAllPopups}>
+        <button className="popup__save-button">Да</button>
+        </PopupWithForm>
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
       </CurrentUserContext.Provider>
