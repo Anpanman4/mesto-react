@@ -10,7 +10,8 @@ function Main({
   handleAddPlaceClick,
   setSelectedCard,
   onCardLike,
-  onCardDislike
+  onCardDislike,
+  handleCardDelete
 }) {
   const currentUser = React.useContext(CurrentUserContext);
 
@@ -41,6 +42,7 @@ function Main({
                   onCardClick={setSelectedCard}
                   onCardLike={onCardLike}
                   onCardDislike={onCardDislike}
+                  handleCardDelete={handleCardDelete}
                 />
               ))
             }

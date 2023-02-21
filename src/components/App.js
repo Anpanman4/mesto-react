@@ -54,6 +54,15 @@ function App() {
     .catch((err) => console.log(err))
   }
 
+  const deleteCard = (id) => {
+    api.deleteCard(id)
+    .then(() => {
+      const newCards = cards.filter(card => card._id !== id)
+      setCards(newCards)
+    })
+    .catch((err) => console.log(err))
+  }
+
   useEffect(() => {
     api.getUserValues()
     .then((data) => {
@@ -82,6 +91,7 @@ function App() {
           setSelectedCard={setSelectedCard}
           onCardLike={onCardLike}
           onCardDislike={onCardDislike}
+          handleCardDelete={deleteCard}
         />
 
         <Footer />

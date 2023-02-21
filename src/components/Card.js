@@ -4,7 +4,7 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext.js'
 
 import Trash from "../images/Trash.svg"
 
-function Card({card, onCardClick, onCardLike, onCardDislike}) {
+function Card({card, onCardClick, onCardLike, onCardDislike, handleCardDelete}) {
   const currentUser = React.useContext(CurrentUserContext);
   const isOwn = currentUser._id === card.owner._id ? true : false;
   const isLiked = card.likes.some(like => like._id === currentUser._id);
@@ -19,7 +19,7 @@ function Card({card, onCardClick, onCardLike, onCardDislike}) {
 
   return (
     <li className="element">
-      {isOwn && <img className="element__trash" src={Trash} alt="удалить" />}
+      {isOwn && <img className="element__trash" src={Trash} alt="удалить" onClick={() => handleCardDelete(card._id)} />}
       <img className="element__image" src={card.link} alt={card.name} onClick={handleCardClick} />
       <div className="element__container">
         <h2 className="element__place">{card.name}</h2>
