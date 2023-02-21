@@ -10,6 +10,8 @@ import PopupWithForm from "./PopupWithForm.js";
 
 import api from "../utils/api.js"
 
+import { CurrentUserContext } from '../contexts/CurrentUserContext.js'
+
 function App() {
   const [ isOpenPopupEdit, setIsOpenPopupEdit ] = React.useState(false);
   const [ isOpenPopupAdd, setIsOpenPopupAdd ] = React.useState(false);
@@ -17,10 +19,8 @@ function App() {
   const [ isOpenPopupDelete, setIsOpenPopupDelete ] = React.useState(false);
 
   const [ selectedCard, setSelectedCard ] = React.useState(null);
-
-  const [ userName, setUserName ] = useState("");
-  const [ userDescription, setUserDescription ] = useState("");
-  const [ userAvatar, setUserAvatar ] = useState("");
+  
+  const [ currentUser, setCurrentUser ] = React.useState({});
 
   const [ cards, setCards ] = useState([]);
 
@@ -32,15 +32,35 @@ function App() {
     setSelectedCard(null);
   }
 
+  const onCardLike = (id) => {
+    api.doLike(id)
+    .then((newCard) => {
+      const newCards = cards.map((card) => {
+        return card._id === newCard._id ? newCard : card;
+      })
+      setCards(newCards);
+    })
+    .catch((err) => console.log(err))
+  }
+
+  const onCardDislike = (id) => {
+    api.deleteLike(id)
+    .then((newCard) => {
+      const newCards = cards.map((card) => {
+        return card._id === newCard._id ? newCard : card;
+      })
+      setCards(newCards)
+    })
+    .catch((err) => console.log(err))
+  }
+
   useEffect(() => {
     api.getUserValues()
     .then((data) => {
-      setUserName(data.name);
-      setUserDescription(data.about);
-      setUserAvatar(data.avatar);
+      setCurrentUser(data);
     })
     .catch((err) => console.log(err))
-  }, [userName, userDescription, userAvatar])
+  }, [])
 
   useEffect(() => {
     api.getInitialCards()
@@ -52,59 +72,59 @@ function App() {
 
   return (
     <>
-      <Header altText="Логотип Место" />
+      <CurrentUserContext.Provider value={currentUser}>
+        <Header altText="Логотип Место" />
+        <Main
+          cards={cards}
+          handleEditAvatarClick={setIsOpenPopupAvatar}
+          handleEditProfileClick={setIsOpenPopupEdit}
+          handleAddPlaceClick={setIsOpenPopupAdd}
+          setSelectedCard={setSelectedCard}
+          onCardLike={onCardLike}
+          onCardDislike={onCardDislike}
+        />
 
-      <Main
-        userName={userName}
-        userAbout={userDescription}
-        userAvatar={userAvatar}
-        cards={cards}
-        handleEditAvatarClick={setIsOpenPopupAvatar}
-        handleEditProfileClick={setIsOpenPopupEdit}
-        handleAddPlaceClick={setIsOpenPopupAdd}
-        setSelectedCard={setSelectedCard}
-      />
+        <Footer />
 
-      <Footer />
+        <PopupWithForm name="edit" title="Редактировать профиль" buttonTitle="Сохранить" isOpen={isOpenPopupEdit} onClose={closeAllPopups}>
+          <form className="popup__form" name="personal-information" noValidate>
+            <section className="popup__section">
+              <input className="popup__field popup__field_type_name" type="text" name="name" placeholder="Ваше имя" autoComplete="off" required minLength="2" maxLength="40" />
+              <span className="popup__field-error"></span>
+            </section>
+            <section className="popup__section">
+              <input className="popup__field popup__field_type_job" type="text" name="about" placeholder="Чем занимаетесь" autoComplete="off" required minLength="2" maxLength="200" />
+              <span className="popup__field-error"></span>
+            </section>
+          </form>
+        </PopupWithForm>
 
-      <PopupWithForm name="edit" title="Редактировать профиль" buttonTitle="Сохранить" isOpen={isOpenPopupEdit} onClose={closeAllPopups}>
-        <form className="popup__form" name="personal-information" noValidate>
-          <section className="popup__section">
-            <input className="popup__field popup__field_type_name" type="text" name="name" placeholder="Ваше имя" autoComplete="off" required minLength="2" maxLength="40" />
-            <span className="popup__field-error"></span>
-          </section>
-          <section className="popup__section">
-            <input className="popup__field popup__field_type_job" type="text" name="about" placeholder="Чем занимаетесь" autoComplete="off" required minLength="2" maxLength="200" />
-            <span className="popup__field-error"></span>
-          </section>
-        </form>
-      </PopupWithForm>
+        <PopupWithForm name="add" title="Новое место" buttonTitle="Создать" isOpen={isOpenPopupAdd} onClose={closeAllPopups}>
+          <form className="popup__form" name="new-card" noValidate>
+            <section className="popup__section">
+              <input className="popup__field popup__field_type_name" type="text" name="name" placeholder="Название" autoComplete="off" required minLength="2" maxLength="30" />
+              <span className="popup__field-error"></span>
+            </section>
+            <section className="popup__section">
+              <input className="popup__field popup__field_type_image" type="url" name="link" placeholder="Ссылка на картинку" autoComplete="off" required />
+              <span className="popup__field-error"></span>
+            </section>
+          </form>
+        </PopupWithForm>
 
-      <PopupWithForm name="add" title="Новое место" buttonTitle="Создать" isOpen={isOpenPopupAdd} onClose={closeAllPopups}>
-        <form className="popup__form" name="new-card" noValidate>
-          <section className="popup__section">
-            <input className="popup__field popup__field_type_name" type="text" name="name" placeholder="Название" autoComplete="off" required minLength="2" maxLength="30" />
-            <span className="popup__field-error"></span>
-          </section>
-          <section className="popup__section">
-            <input className="popup__field popup__field_type_image" type="url" name="link" placeholder="Ссылка на картинку" autoComplete="off" required />
-            <span className="popup__field-error"></span>
-          </section>
-        </form>
-      </PopupWithForm>
+        <PopupWithForm name="avatar" title="Обновить аватар" buttonTitle="Сохранить" isOpen={isOpenPopupAvatar} onClose={closeAllPopups}>
+          <form className="popup__form" name="new-avatar" noValidate>
+            <section className="popup__section">
+              <input className="popup__field popup__field_type_image" type="url" name="avatar" placeholder="Ссылка на картинку" autoComplete="off" required />
+              <span className="popup__field-error"></span>
+            </section>
+          </form>
+        </PopupWithForm>
 
-      <PopupWithForm name="avatar" title="Обновить аватар" buttonTitle="Сохранить" isOpen={isOpenPopupAvatar} onClose={closeAllPopups}>
-        <form className="popup__form" name="new-avatar" noValidate>
-          <section className="popup__section">
-            <input className="popup__field popup__field_type_image" type="url" name="avatar" placeholder="Ссылка на картинку" autoComplete="off" required />
-            <span className="popup__field-error"></span>
-          </section>
-        </form>
-      </PopupWithForm>
+        <PopupWithForm name="delete" title="Вы уверены?" buttonTitle="Да" isOpen={isOpenPopupDelete} onClose={closeAllPopups} />
 
-      <PopupWithForm name="delete" title="Вы уверены?" buttonTitle="Да" isOpen={isOpenPopupDelete} onClose={closeAllPopups} />
-
-      <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+      </CurrentUserContext.Provider>
     </>
   );
 }
