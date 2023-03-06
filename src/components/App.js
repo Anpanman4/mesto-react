@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react';
+import {Routes, Route} from 'react-router-dom';
 
 import '../index.css'
 
 import Header from "./Header.js";
 import Footer from "./Footer.js";
 import Main from "./Main.js"
+import Login from "./Login.js"
+import Register from "./Register.js"
 import ImagePopup from "./ImagePopup.js";
 import PopupWithForm from "./PopupWithForm.js";
 import EditProfilePopup from "./EditProfilePopup.js";
@@ -113,16 +116,38 @@ function App() {
     <>
       <CurrentUserContext.Provider value={currentUser}>
         <Header altText="Логотип Место" />
-        <Main
-          cards={cards}
-          handleEditAvatarClick={setIsOpenPopupAvatar}
-          handleEditProfileClick={setIsOpenPopupEdit}
-          handleAddPlaceClick={setIsOpenPopupAdd}
-          setSelectedCard={setSelectedCard}
-          onCardLike={onCardLike}
-          onCardDislike={onCardDislike}
-          handleCardDelete={deleteCard}
-        />
+
+        <Routes>
+          <Route
+            exact path='/'
+            element={
+              <Main
+                cards={cards}
+                handleEditAvatarClick={setIsOpenPopupAvatar}
+                handleEditProfileClick={setIsOpenPopupEdit}
+                handleAddPlaceClick={setIsOpenPopupAdd}
+                setSelectedCard={setSelectedCard}
+                onCardLike={onCardLike}
+                onCardDislike={onCardDislike}
+                handleCardDelete={deleteCard}
+              />
+            }
+          />
+          <Route
+            exact path='/sign-in'
+            element={
+              <Login
+
+              />}
+          />
+          <Route
+            exact path='/sign-up'
+            element={
+              <Register
+                
+              />}
+          />
+        </Routes>
 
         <Footer />
 
