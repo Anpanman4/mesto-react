@@ -13,6 +13,7 @@ import PopupWithForm from "./PopupWithForm.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
 import AddPlacePopup from "./AddPlacePopup.js";
+import InfoTooltip from "./InfoTooltip.js";
 
 import api from "../utils/api.js"
 
@@ -136,20 +137,28 @@ function App() {
           <Route
             exact path='/sign-in'
             element={
-              <Login
+              <main>
+                <Login
 
-              />}
+                />
+              </main>
+            }
           />
           <Route
             exact path='/sign-up'
             element={
-              <Register
-                
-              />}
+              <main>
+                <Register
+  
+                />
+              </main>
+            }
           />
         </Routes>
 
         <Footer />
+
+        <InfoTooltip />
 
         <EditProfilePopup isOpen={isOpenPopupEdit} onClose={closeAllPopups} onUpdateUser={handleProfileSubmit} />
 
