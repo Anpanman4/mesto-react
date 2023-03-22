@@ -1,11 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 
 import PopupWithForm from './PopupWithForm.js'
 
-// import { CurrentUserContext } from '../contexts/CurrentUserContext.js'
-
 function AddPlacePopup({isOpen, onClose, addNewCard}) {
-  // const currentUser = useContext(CurrentUserContext);
 
   const [ name, setName ] = React.useState('')
   const [ link, setLink ] = React.useState('')
