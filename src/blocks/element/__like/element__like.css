@@ -3,6 +3,7 @@
 	height: 19px;
 	background-image: url(../../../images/like.svg);
 	background-repeat: no-repeat;
+	background-color: white;
 	cursor: pointer;
 	border: 0;
 }
